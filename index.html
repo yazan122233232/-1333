@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>مقولات أنمي بالرومانجي مع المعنى</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal&display=swap');
+  body {
+    margin: 0;
+    font-family: 'Tajawal', sans-serif;
+    background: linear-gradient(135deg, #1c1c2e, #23234f);
+    color: #f0f0f0;
+    display: flex;
+    min-height: 100vh;
+    transition: background 0.8s ease;
+  }
+  .sidebar {
+    width: 270px;
+    background: rgba(31, 31, 57, 0.95);
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    border-right: 1px solid #444;
+  }
+  .sidebar h2 {
+    margin: 0 0 15px;
+    text-align: center;
+    color: #ff6f61;
+    text-shadow: 0 0 5px #ff6f61aa;
+  }
+  .anime-list { list-style: none; padding: 0; margin: 0; }
+  .anime-list li {
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    background: #2a2a4a;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-align: center;
+  }
+  .anime-list li:hover,
+  .anime-list li.active {
+    background: #ff6f61;
+    color: #fff;
+    transform: scale(1.05);
+  }
+  .content {
+    flex: 1;
+    padding: 30px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .content h1 {
+    margin-bottom: 20px;
+    font-weight: 700;
+    color: #ff6f61;
+    text-shadow: 0 0 10px #ff6f61aa;
+  }
+  .quote-box {
+    background: rgba(30, 30, 63, 0.9);
+    border-radius: 15px;
+    padding: 25px 30px;
+    max-width: 650px;
+    box-shadow: 0 0 20px #ff6f61aa;
+    animation: fadeIn 0.5s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: scale(0.9);} to { opacity: 1; transform: scale(1);} }
+  .quote-character { font-weight: 700; font-size: 1.3rem; color: #ff9f80; margin-bottom: 10px; }
+  .quote-rj { font-size: 1.8rem; color: #ffa07a; margin-bottom: 8px; direction: ltr; font-family: "Courier New", Courier, monospace; }
+  .quote-pron { font-size: 1.2rem; color: #ffd6b8; margin-bottom: 10px; font-style: italic; }
+  .quote-ar { font-size: 1.2rem; margin-bottom: 10px; color: #ddd; }
+  .quote-meaning { font-size: 1rem; color: #ccc; margin-bottom: 15px; font-style: italic; }
+  .quote-index { margin-bottom: 12px; color: #bbb; }
+  .progress-bar { height: 6px; background: #444; border-radius: 3px; overflow: hidden; margin: 10px 0; }
+  .progress { height: 100%; width: 0%; background: #ff6f61; transition: width 0.3s; }
+  .nav-buttons { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+  button {
+    background: linear-gradient(135deg, #ff6f61, #ff3b2f);
+    border: none;
+    border-radius: 25px;
+    padding: 10px 18px;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 0 10px #ff6f61bb;
+    transition: transform 0.2s;
+  }
+  button:hover { transform: scale(1.05); }
+  footer { position: fixed; bottom: 10px; right: 10px; color: #888; font-size: 0.8rem; }
+  @media (max-width: 700px) {
+    body { flex-direction: column; }
+    .sidebar {
+      width: 100%;
+      max-height: 150px;
+      display: flex;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 10px;
+      white-space: nowrap;
+    }
+    .anime-list li {
+      display: inline-block;
+      margin: 0 8px;
+      padding: 10px 20px;
+      border-radius: 20px;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <h2>قائمة الأنمي</h2>
+    <ul class="anime-list" id="anime-list"></ul>
+  </aside>
+
+  <main class="content">
+    <h1 id="anime-title">اختر أنمي من القائمة</h1>
+    <div class="quote-box" id="quote-box" style="display:none;">
+      <div class="quote-index" id="quote-index"></div>
+      <div class="progress-bar"><div class="progress" id="progress"></div></div>
+      <div class="quote-character" id="quote-character"></div>
+      <div class="quote-rj" id="quote-rj"></div>
+      <div class="quote-pron" id="quote-pron"></div>
+      <div class="quote-ar" id="quote-ar"></div>
+      <div class="quote-meaning" id="quote-meaning"></div>
+      <div class="nav-buttons">
+        <button id="prev-btn">السابق</button>
+        <button id="next-btn">التالي</button>
+        <button id="random-btn">عشوائي</button>
+        <button id="copy-btn">نسخ المقولة</button>
+        <button id="speak-btn">🔊 استمع</button>
+      </div>
+    </div>
+  </main>
+
+  <footer>تم التطوير بواسطة ✨يزن✨</footer>
+
+<script>
+  const animeData = [
+    { name: "ناروتو", quotes: [
+      { character: "ناروتو", rj: "Dattebayo!", pron: "داتِّيبايو!", ar: "داتِّيبايو!", meaning: "تأكيد كلام ناروتو." },
+      { character: "كاكاشي", rj: "Omae wa mou shindeiru.", pron: "أوماي وا مو شينديرو.", ar: "أنت ميت بالفعل.", meaning: "تهديد قوي." },
+      { character: "ساسوكي", rj: "Chidori!", pron: "تشيدوري!", ar: "تشيدوري!", meaning: "تقنية ساسوكي." },
+      { character: "هيناتا", rj: "Ganbatte, Naruto-kun!", pron: "غانباتِّه ناروتو كون!", ar: "بالتوفيق ناروتو!", meaning: "تشجيع هيناتا." }
+    ]},
+    { name: "ون بيس", quotes: [
+      { character: "لوفي", rj: "Kaizoku ou ni ore wa naru!", pron: "كايدزوكو أو ني أوري وا نارُ!", ar: "سأصبح ملك القراصنة!", meaning: "شعار لوفي." },
+      { character: "زورو", rj: "Ore wa sekai no saikou no kenshi!", pron: "أوري وا سيكاي نو سايكو نو كِنشي!", ar: "سأصبح أفضل سياف!", meaning: "طموح زورو." },
+      { character: "سانجي", rj: "Ore wa yamerarenai!", pron: "أوري وا ياميراريناي!", ar: "لن أستسلم!", meaning: "إصرار سانجي." },
+      { character: "نامي", rj: "Arigatou!", pron: "أريغاتو!", ar: "شكراً!", meaning: "امتنان نامي." }
+    ]},
+    { name: "ديمون سلاير", quotes: [
+      { character: "تانجيرو", rj: "Ningen no kokoro wa tsuyoi.", pron: "نينغِن نو كوكورو وا تسويوي.", ar: "قلب الإنسان قوي.", meaning: "إيمان تانجيرو." },
+      { character: "نيزوكو", rj: "Onii-chan!", pron: "أوني-تشان!", ar: "أخي!", meaning: "نداء نيزوكو." },
+      { character: "رينغوكو", rj: "Umae wa yowai.", pron: "أوماي وا يواي.", ar: "أنت ضعيف.", meaning: "تحدي رينغوكو." }
+    ]},
+    { name: "هجوم العمالقة", quotes: [
+      { character: "إيرين", rj: "Shinzou wo sasageyo!", pron: "شينزوو وو ساساجيو!", ar: "كرّس قلبك!", meaning: "شعار التضحية." },
+      { character: "ليفاي", rj: "Erwin wa tensai da.", pron: "إروين وا تِنساي دا.", ar: "إروين عبقري.", meaning: "إعجاب ليفاي." },
+      { character: "ميكاسا", rj: "Arigatou, Eren.", pron: "أريغاتو إيرين.", ar: "شكراً يا إيرين.", meaning: "امتنان ميكاسا." }
+    ]},
+    { name: "ديث نوت", quotes: [
+      { character: "لايت", rj: "Watashi ga Kira da.", pron: "واتاشي جا كيرا دا.", ar: "أنا هو كيرا.", meaning: "إعلان الهوية." },
+      { character: "رّيوك", rj: "Kamisama no yō ni.", pron: "كاميساما نو يو ني.", ar: "كأنه إله.", meaning: "وصف القدرات." },
+      { character: "ميسا", rj: "Kawaii ne.", pron: "كاوايي ني.", ar: "جميل، أليس كذلك؟", meaning: "إعجاب ميسا." }
+    ]},
+    { name: "مذكرة الموت", quotes: [ // نفس ديث نوت بالياباني
+      { character: "لايت", rj: "Watashi ga Kira da.", pron: "واتاشي جا كيرا دا.", ar: "أنا هو كيرا.", meaning: "إعلان الهوية." }
+    ]},
+    { name: "كود غياس", quotes: [
+      { character: "لولوش", rj: "Mokushiroku no Tsubasa.", pron: "موكوشيروكو نو تسوباسا.", ar: "أجنحة نهاية العالم.", meaning: "عنوان درامي." },
+      { character: "سيزر", rj: "Geass!", pron: "جِاس!", ar: "جياس!", meaning: "قوة لولوش الخاصة." },
+      { character: "كانان", rj: "Ore wa Zero.", pron: "أوري وا زيرو.", ar: "أنا زيرو.", meaning: "تأكيد هوية." }
+    ]},
+    { name: "هنتاي", quotes: [
+      { character: "شخصية خيالية", rj: "Hentai!", pron: "هنتاي!", ar: "هنتاي!", meaning: "تعريف." }
+    ]},
+    { name: "بليتش", quotes: [
+      { character: "إيتشيغو", rj: "Getsuga Tenshou!", pron: "غيتسوغا تينشو!", ar: "تقنية خاصة.", meaning: "هجوم إيتشيغو." },
+      { character: "روكيا", rj: "Sode no Shirayuki.", pron: "سوده نو شيرايكي.", ar: "تقنية الثلج.", meaning: "سلاح روكيا." }
+    ]},
+    { name: "فول ميتال ألكمست", quotes: [
+      { character: "إدوارد", rj: "Equivalent exchange.", pron: "التبادل المكافئ.", ar: "مبدأ الكيمياء.", meaning: "قاعدة أساسية." },
+      { character: "ألфонز", rj: "I'm here.", pron: "أنا هنا.", ar: "وجود ثابت.", meaning: "تعزيز الدعم." }
+    ]},
+    { name: "ديث بارادايز", quotes: [
+      { character: "شخصية", rj: "Quote here.", pron: "Pronunciation.", ar: "الترجمة.", meaning: "المعنى." }
+    ]}
+  ];
+
+  const colors = [
+    "linear-gradient(135deg, #1c1c2e, #23234f)",
+    "linear-gradient(135deg, #2e1c1c, #4f2323)",
+    "linear-gradient(135deg, #1c2e1c, #234f23)",
+    "linear-gradient(135deg, #1c2e4f, #233f5f)",
+    "linear-gradient(135deg, #4b2e2e, #7f4f4f)",
+    "linear-gradient(135deg, #2e4b2e, #4f7f4f)"
+  ];
+
+  const animeListElem = document.getElementById("anime-list");
+  const animeTitleElem = document.getElementById("anime-title");
+  const quoteBoxElem = document.getElementById("quote-box");
+  const quoteIndexElem = document.getElementById("quote-index");
+  const quoteCharacterElem = document.getElementById("quote-character");
+  const quoteRjElem = document.getElementById("quote-rj");
+  const quotePronElem = document.getElementById("quote-pron");
+  const quoteArElem = document.getElementById("quote-ar");
+  const quoteMeaningElem = document.getElementById("quote-meaning");
+  const prevBtn = document.getElementById("prev-btn");
+  const nextBtn = document.getElementById("next-btn");
+  const randomBtn = document.getElementById("random-btn");
+  const copyBtn = document.getElementById("copy-btn");
+  const speakBtn = document.getElementById("speak-btn");
+  const progressElem = document.getElementById("progress");
+
+  let currentAnimeIndex = -1;
+  let currentQuoteIndex = 0;
+
+  function buildAnimeList() {
+    animeData.forEach((anime, index) => {
+      const li = document.createElement("li");
+      li.textContent = anime.name;
+      li.addEventListener("click", () => selectAnime(index));
+      animeListElem.appendChild(li);
+    });
+  }
+
+  function updateActiveAnime() {
+    document.querySelectorAll("#anime-list li").forEach((li, idx) => li.classList.toggle("active", idx === currentAnimeIndex));
+  }
+
+  function showQuote() {
+    if(currentAnimeIndex === -1) return;
+    const anime = animeData[currentAnimeIndex];
+    const quote = anime.quotes[currentQuoteIndex];
+    animeTitleElem.textContent = anime.name;
+    quoteBoxElem.style.display = "block";
+    quoteIndexElem.textContent = `مقولة ${currentQuoteIndex + 1} من ${anime.quotes.length}`;
+    quoteCharacterElem.textContent = `الشخصية: ${quote.character}`;
+    quoteRjElem.textContent = quote.rj;
+    quotePronElem.textContent = `(${quote.pron})`;
+    quoteArElem.textContent = quote.ar;
+    quoteMeaningElem.textContent = `المعنى: ${quote.meaning}`;
+    progressElem.style.width = `${((currentQuoteIndex + 1) / anime.quotes.length) * 100}%`;
+    document.body.style.background = colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  function selectAnime(index) {
+    currentAnimeIndex = index;
+    currentQuoteIndex = 0;
+    updateActiveAnime();
+    showQuote();
+  }
+
+  prevBtn.addEventListener("click", () => {
+    if(currentAnimeIndex === -1) return;
+    const len = animeData[currentAnimeIndex].quotes.length;
+    currentQuoteIndex = (currentQuoteIndex - 1 + len) % len;
+    showQuote();
+  });
+
+  nextBtn.addEventListener("click", () => {
+    if(currentAnimeIndex === -1) return;
+    const len = animeData[currentAnimeIndex].quotes.length;
+    currentQuoteIndex = (currentQuoteIndex + 1) % len;
+    showQuote();
+  });
+
+  randomBtn.addEventListener("click", () => {
+    if(currentAnimeIndex === -1) return;
+    currentQuoteIndex = Math.floor(Math.random() * animeData[currentAnimeIndex].quotes.length);
+    showQuote();
+  });
+
+  copyBtn.addEventListener("click", () => {
+    if(currentAnimeIndex === -1) return;
+    const quote = animeData[currentAnimeIndex].quotes[currentQuoteIndex];
+    navigator.clipboard.writeText(`${quote.rj} - ${quote.ar} (${quote.meaning})`);
+    alert("تم نسخ المقولة!");
+  });
+
+  speakBtn.addEventListener("click", () => {
+    if(currentAnimeIndex === -1) return;
+    const quote = animeData[currentAnimeIndex].quotes[currentQuoteIndex];
+    const utter = new SpeechSynthesisUtterance(quote.rj);
+    utter.lang = "ja-JP";
+    speechSynthesis.speak(utter);
+  });
+
+  buildAnimeList();
+</script>
+</body>
+</html>
